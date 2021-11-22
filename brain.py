@@ -39,8 +39,6 @@ class Brain:
         for neuron in self.neurons:
             return neuron.execute(coord)
 
-
-
     def construct(self):
         genes = self.genome.genes
 

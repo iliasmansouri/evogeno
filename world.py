@@ -54,14 +54,13 @@ class World:
     def get_state(self) -> list:
         return self.agents
 
-
-    def reset_agent_location(self,agent):
-        x = randrange(self.x_size) 
+    def reset_agent_location(self, agent):
+        x = randrange(self.x_size)
         y = randrange(self.y_size)
-        agent.set_coordinates(x,y)
+        agent.set_coordinates(x, y)
 
     def step(self):
-        if self.time_step % self.life_time==0:
+        if self.time_step % self.life_time == 0:
             for agent in self.agents:
                 if agent.coord[0] < 64:
                     agent.duplicate()
@@ -73,6 +72,7 @@ class World:
             for agent in self.agents:
                 agent.execute()
         self.time_step += 1
+
 
 if __name__ == "__main__":
     w = World(3)
