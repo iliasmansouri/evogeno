@@ -12,10 +12,12 @@ class Sim:
 
     def __post_init__(self):
         self.world = World(self.n_agents, self.x_size, self.y_size)
-        self.viz = Visualizer(self.world)
+        self.viz = Visualizer(self.x_size, self.y_size)
 
     def run(self):
-        self.viz.run()
+        while True:
+            self.world.step()
+            self.viz.run_step(self.world.agents)
 
 
 if __name__ == "__main__":

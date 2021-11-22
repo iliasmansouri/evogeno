@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import pygame
-from world import World
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -8,7 +7,8 @@ BLACK = (0, 0, 0)
 
 @dataclass
 class Visualizer:
-    world: World
+    col_nb: int
+    row_nb: int
     cell_size: int = 7
     axis_labels: bool = False
     grid_coord_margin_size: int = 10
@@ -16,13 +16,10 @@ class Visualizer:
     surface = pygame.display.set_mode(flags=pygame.RESIZABLE)
 
     def __post_init__(self):
-        self.col_nb = self.world.x_size
-        self.row_nb = self.world.y_size
         pygame.init()
         self.grid = [[0 for i in range(self.col_nb)] for j in range(self.row_nb)]
         self.font = pygame.font.SysFont("arial", 12, False)
         self.clock = pygame.time.Clock()
-        self.running = True
 
     def draw_rectangle(self):
         for li in range(self.row_nb):
@@ -64,19 +61,17 @@ class Visualizer:
             )
             pygame.draw.circle(self.surface, (255, 0, 0), (x, y), radius=5)
 
-    def run(self):
-        while self.running:
-            # self.clock.tick(self.fps)
-            self.world.step()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-
-            self.surface.fill(WHITE)
-
-            self.draw_agents(self.world.agents)
-            self.draw_rectangle()
-
-            pygame.display.flip()
-
+    def quit(self):
         pygame.quit()
+
+    def run_step(self, agents):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit()
+
+        self.surface.fill(WHITE)
+
+        self.draw_agents(agents)
+        self.draw_rectangle()
+
+        pygame.display.flip()
