@@ -3,28 +3,10 @@ from .sensory import SensoryMux
 from .action import ActionMux
 
 
-class MoveLeft:
-    def execute(self, coord):
-        x = coord[0]
-        y = coord[1]
-        if x > 0:
-            x -= 1
-        return (x, y)
-
-
-class MoveRight:
-    def execute(self, coord):
-        x = coord[0]
-        y = coord[1]
-        if x < 128:
-            x += 1
-        return (x, y)
-
-
 class SourceDecoding:
     def __init__(self) -> None:
         self.index = 0
-        self.type_indices = (1, 3)
+        self.type_indices = 1
         self.weight_indices = (4, 7)
         self.bias_index = 8
 
@@ -45,12 +27,6 @@ class NeuronFactory:
         self.source_decoding = SourceDecoding()
         self.sink_decoding = SinkDecoding()
 
-    def create_neuron(self, gene):
-        if self.check_nth_bit_set(gene, 0):
-            return MoveLeft()
-        else:
-            return MoveRight()
-
     def create_neurons(self, gene) -> list:
         neurons = list()
         for code in [self.source_decoding, self.sink_decoding]:
@@ -60,16 +36,32 @@ class NeuronFactory:
     def __get_neuron(self, gene, code) -> Neuron:
         if self.check_nth_bit_set(gene, code.index):
             neuron_idx = self.__extract_sequence(gene, code.type_indices)
-            neuron = self.sensor_mux.select_neuron(neuron_idx)
+            if isinstance(code, SourceDecoding):
+                neuron = self.sensor_mux.select_neuron(neuron_idx)
+            elif isinstance(code, SinkDecoding):
+                neuron = self.action_mux.select_neuron(neuron_idx)
+            else:
+                raise TypeError(f"code is of type {type(code)}")
         else:
             neuron = HiddenNeuron
+
+        if not neuron:
+            return None
+
         weight = self.__extract_sequence(gene, code.weight_indices)
         bias = self.__extract_sequence(gene, code.bias_index)
-        return neuron(weight, bias)
+
+        return neuron.create(weight, bias)
 
     def __extract_sequence(self, gene, indices) -> int:
-        start, end = indices
-        code_seq = gene.get_binary()[start:end]
+        if isinstance(indices, int):
+            code_seq = "".join(gene.bit_seq[indices])
+        elif isinstance(indices, tuple) and len(indices) == 2:
+            start, end = indices
+            code_seq = "".join(gene.bit_seq[start : end + 1])
+        else:
+            raise ValueError(f"indices has length of {len(indices)}")
+
         return int(code_seq, 2)
 
     def create_connection(self, gene) -> tuple:
@@ -77,4 +69,4 @@ class NeuronFactory:
         return (source_neuron, sink_neuron)
 
     def check_nth_bit_set(self, gene, n) -> bool:
-        return True if gene.get_list()[-(n + 1)] == "1" else False
+        return True if gene.bit_seq[-(n + 1)] == "1" else False
