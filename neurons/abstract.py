@@ -18,6 +18,10 @@ class Neuron(ABC):
         neural_transfer = self.transfer(activation)
         return neural_transfer
 
+    @classmethod
+    def create(cls, weight, bias):
+        return cls(weight, bias)
+
 
 class HiddenNeuron(Neuron):
     def __init__(self, weight, bias) -> None:
