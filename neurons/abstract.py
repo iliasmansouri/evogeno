@@ -64,3 +64,11 @@ class SensoryNeuron(Neuron):
 class ActionNeuron(Neuron):
     def __init__(self, weight, bias) -> None:
         super().__init__(weight, bias)
+        self.neuron_output = 0
+
+    def get_neuron_output(self):
+        return self.neuron_output
+
+    def feed_forward(self, neural_input):
+        self.neuron_output = super().feed_forward(neural_input)
+        return self.neuron_output
