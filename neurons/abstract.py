@@ -25,6 +25,7 @@ class Neuron(ABC):
 
 class HiddenNeuron(Neuron):
     def __init__(self, weight, bias) -> None:
+        self.neuron_output = 0
         super().__init__(weight, bias)
         self.neuron_output = None
 
@@ -34,6 +35,9 @@ class HiddenNeuron(Neuron):
     def feed_forward(self, neural_input):
         self.neuron_output = super().feed_forward(neural_input)
         return self.neuron_output
+
+    def __repr__(self) -> str:
+        return "hidden_neuron"
 
 
 class SensoryNeuron(Neuron):
