@@ -58,25 +58,3 @@ class World:
         x = randrange(self.x_size)
         y = randrange(self.y_size)
         agent.set_coordinates(x, y)
-
-    def step(self):
-        if self.time_step % self.life_time == 0:
-            for agent in self.agents:
-                if agent.coord[0] < 64:
-                    agent.duplicate()
-                    self.reset_agent_location(agent)
-                else:
-                    agent.die()
-                    self.agents.remove(agent)
-        else:
-            for agent in self.agents:
-                agent.execute()
-        self.time_step += 1
-
-
-if __name__ == "__main__":
-    w = World(3)
-    for a in w.agents:
-        for gene in a.genome.genes:
-            print(gene.bit_seq)
-        print(a.brain.neurons)
