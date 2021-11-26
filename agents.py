@@ -5,8 +5,8 @@ from brain import Brain
 
 
 @dataclass
-class Actions:
-    pass
+class AgentState:
+    coord: Tuple
 
 
 @dataclass
@@ -19,7 +19,23 @@ class Agent:
         self.brain = Brain(self.genome)
 
     def execute(self):
-        self.coord = self.brain.execute(self.state())
+        decisions = self.brain.execute(self.state())
+        self.update_state(decisions)
+
+    def update_state(self, decisions):
+        x, y = self.coord
+        if decisions:
+            for k, v in decisions.items():
+                if v > 0.5:
+                    if str(k) == "move_left":
+                        x = x - 1 if x > 0 else x
+                    elif str(k) == "move_right":
+                        x = x + 1 if x < 128 else x
+                    elif str(k) == "move_back":
+                        y = y + 1 if y < 128 else y
+                    elif str(k) == "move_forward":
+                        y = y - 1 if y > 0 else y
+            self.coord = (x, y)
 
     def state(self):
         return {"coord": self.coord}
@@ -36,3 +52,14 @@ class Agent:
 
     def set_coordinates(self, x, y):
         self.coord = (x, y)
+
+    @property
+    def coord(self):
+        return self.__coord
+
+    @coord.setter
+    def coord(self, val):
+        x, y = val
+        x = 0 if x < 0 else x
+        y = 0 if y < 0 else y
+        self.__coord = (x, y)
