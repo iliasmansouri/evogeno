@@ -6,7 +6,7 @@ class ActionMux:
         self.mux = {0: MoveLeft, 1: MoveRight, 2: MoveBack, 3: MoveForward}
 
     def select_neuron(self, neuron_idx):
-        return self.mux.get(neuron_idx, lambda: "Invalid neuron index")
+        return self.mux.get(neuron_idx)
 
 
 class MoveLeft(ActionNeuron):

@@ -27,7 +27,6 @@ class HiddenNeuron(Neuron):
     def __init__(self, weight, bias) -> None:
         self.neuron_output = 0
         super().__init__(weight, bias)
-        self.neuron_output = None
 
     def get_neuron_output(self):
         return self.neuron_output
