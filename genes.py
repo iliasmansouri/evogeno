@@ -1,38 +1,24 @@
 from dataclasses import dataclass
 import os, binascii
-from random import random
+from random import random, randint
 
 
 @dataclass
 class Gene:
-    # bit_seq = binascii.b2a_hex(os.urandom(2))
+    n_bits = 16
 
     def __post_init__(self):
-        # self.bit_seq = randint(0,5000)
-        self.bit_seq = binascii.b2a_hex(os.urandom(1))
-
-    def get_binary(self) -> str:
-        return bin(self.get_decimal())
-
-    def get_decimal(self) -> int:
-        return int.from_bytes(self.bit_seq, byteorder="big", signed=False)
-
-    def get_list(self) -> list:
-        return list(self.get_binary())[2:]
+        self.bit_seq = "".join([str(randint(0, 1)) for n in range(self.n_bits)])
 
     def mutate(self, mutation_proability) -> None:
-        gene_seq = self.get_list()
-
-        for i in range(len(gene_seq)):
+        new_seq = list()
+        for b in self.bit_seq:
             if random() < mutation_proability:
-                gene_seq[i] = "0" if gene_seq[i] == "1" else "1"
+                new_seq.append("0" if b == "1" else "1")
+            else:
+                new_seq.append(b)
 
-        s = "".join(gene_seq)
-
-        self.bit_seq = self.bitstring_to_bytes(s)
-
-    def bitstring_to_bytes(self, s) -> bytes:
-        return int(s, 2).to_bytes((len(s) + 7) // 8, byteorder="big")
+        self.bit_seq = new_seq
 
 
 @dataclass
