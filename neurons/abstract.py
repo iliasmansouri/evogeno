@@ -43,6 +43,7 @@ class HiddenNeuron(Neuron):
 class SensoryNeuron(Neuron):
     def __init__(self, weight, bias) -> None:
         super().__init__(weight, bias)
+        self.input_state = None
 
     @abstractmethod
     def get_sensor_input(self):
@@ -50,6 +51,14 @@ class SensoryNeuron(Neuron):
 
     def get_neuron_output(self):
         return self.get_sensor_input()
+
+    @property
+    def input_state(self):
+        return self.__input_state
+
+    @input_state.setter
+    def input_state(self, state):
+        self.__input_state = state
 
 
 class ActionNeuron(Neuron):
